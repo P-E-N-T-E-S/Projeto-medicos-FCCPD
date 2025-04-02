@@ -2,29 +2,24 @@ import pika, os, json
 from datetime import datetime
 from dotenv import load_dotenv
 
+load_dotenv()
+RABBITMQ_URL = os.getenv('RABBITMQ_URL') or os.environ.get('CLOUDAMQP_URL')
+EXCHANGE_NAME = "agendamento_exchange"
+EXCHANGE_TYPE = "topic"
+
+ESPECIALIDADES = {
+    '1': {'name': 'Clinico geral', 'routing_key': 'agendamento.clinico_geral'},
+    '2': {'name': 'Cardiologia', 'routing_key': 'agendamento.cardiologia'},
+    '3': {'name': 'Pediatria', 'routing_key': 'agendamento.pediatria'}
+}
 
 def main():
-    load_dotenv()
-    rabbitmq_url = os.getenv('RABBITMQ_URL')
-    url = os.environ.get('CLOUDAMQP_URL', rabbitmq_url)
-
-    routing_keys = {
-        '1': 'agendamento.clinico_geral',
-        '2': 'agendamento.cardiologia',
-        '3': 'agendamento.pediatria'
-    }
-
-    especialidade = {
-        '1': 'Clinico geral',
-        '2': 'Cardiologia',
-        '3': 'Pediatria'
-    }
 
     try:
-        params = pika.URLParameters(url)
+        params = pika.URLParameters(RABBITMQ_URL)
         connection = pika.BlockingConnection(params)
         channel = connection.channel()
-        channel.exchange_declare(exchange='topic-exchange', exchange_type='topic')
+        channel.exchange_declare(exchange=EXCHANGE_NAME, exchange_type=EXCHANGE_TYPE, durable=True)
 
         while True:
             print("\n------- Sistema de agendamento médico -------")
@@ -49,17 +44,18 @@ def main():
             body = {
                 "dataSolicitacao": datetime.now().strftime("%d/%m/%Y - %H:%M"),
                 "nome": nome,
-                "especialidade": especialidade[especialidade_id],
+                "especialidade": ESPECIALIDADES[especialidade_id]['name'],
                 "dataConsulta": data_str
             }
 
             channel.basic_publish(
-                exchange='topic-exchange',
-                routing_key=routing_keys[especialidade_id],
+                exchange='agendamento_exchange',
+                routing_key=ESPECIALIDADES[especialidade_id]['routing_key'],
                 body=json.dumps(body)
             )
 
-            print(f" [x] Enviado: {body} para {routing_keys[especialidade_id]}")
+
+            print(f" [x] Enviado: {body} para {ESPECIALIDADES[especialidade_id]['routing_key']}")
 
             continuar = input("Deseja agendar outra consulta? (s/n): ")
             if continuar.lower() == 'n':

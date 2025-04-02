@@ -402,3 +402,4 @@ FodyWeavers.xsd
 #Other Files
 .DS_Store
 .env
+application.properties

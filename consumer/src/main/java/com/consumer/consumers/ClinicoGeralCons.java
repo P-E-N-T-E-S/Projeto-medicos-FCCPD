@@ -1,19 +1,18 @@
 package com.consumer.consumers;
 
-import com.consumer.ConsumerApplication;
 import com.consumer.utils.SolicitacaoConsulta;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Service
-public class ClinicoGeral {
+@Component
+public class ClinicoGeralCons {
 
-    private final Map<LocalDateTime, SolicitacaoConsulta> consultas = new ConcurrentHashMap<>();
+    private final Map<LocalDateTime, SolicitacaoConsulta> clinicoConsultas = new ConcurrentHashMap<>();
 
-    @RabbitListener(queues = ConsumerApplication.CLINICO_GERAL_QUEUE)
+    @RabbitListener(queues = "#{clinicoGeralQueue.name}")
     public void receberSolicitacao(String mensagem) throws Exception {
         System.out.println("CLÍNICO GERAL: Recebida solicitação - " + mensagem);
         SolicitacaoConsulta consulta = SolicitacaoConsulta.fromJson(mensagem);
@@ -21,11 +20,11 @@ public class ClinicoGeral {
     }
 
     private void agendarConsulta(SolicitacaoConsulta consulta) {
-        if (consultas.containsKey(consulta.getDataConsulta())) {
+        if (clinicoConsultas.containsKey(consulta.getDataConsulta())) {
             System.out.println("CLÍNICO GERAL: Horário já ocupado: " + consulta.getDataConsulta());
         }
         else {
-            consultas.put(consulta.getDataConsulta(), consulta);
+            clinicoConsultas.put(consulta.getDataConsulta(), consulta);
             System.out.println("CLÍNICO GERAL: Consulta confirmada para + " + consulta.getDataConsulta());
         }
     }
