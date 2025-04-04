@@ -54,18 +54,14 @@ Sistema distribuído onde:
    ```  
 2. Execute o Spring Boot:  
    ```bash
-   mvnw.cmd spring-boot:run
+   .\mvnw.cmd spring-boot:run
    ```  
 ### **Passo 2: Executar Produtor (Python)**  
 1. Entre na pasta do produtor:  
    ```bash
    cd publisher/
    ```  
-2. Instale as dependências:  
-   ```bash
-   pip install -r requirements.txt
-   ```  
-3. Execute o script:  
+2. Execute o script:  
    ```bash
    python agendamento_paciente.py
    ```  
