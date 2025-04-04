@@ -1,5 +1,7 @@
 package com.consumer.consumers;
 
+import com.consumer.utils.ConditionalOnSelectedMode;
+import com.consumer.utils.RabbitMQConfig;
 import com.consumer.utils.SolicitacaoConsulta;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -8,11 +10,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@ConditionalOnSelectedMode("1")
 public class ClinicoGeralCons {
 
     private final Map<LocalDateTime, SolicitacaoConsulta> clinicoConsultas = new ConcurrentHashMap<>();
 
-    @RabbitListener(queues = "#{clinicoGeralQueue.name}")
+    @RabbitListener(queues = "#{queue.name}")
     public void receberSolicitacao(String mensagem) throws Exception {
         System.out.println("CLÍNICO GERAL: Recebida solicitação - " + mensagem);
         SolicitacaoConsulta consulta = SolicitacaoConsulta.fromJson(mensagem);
