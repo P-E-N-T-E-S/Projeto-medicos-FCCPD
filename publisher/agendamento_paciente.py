@@ -3,7 +3,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
-RABBITMQ_URL = os.getenv('RABBITMQ_URL') or os.environ.get('CLOUDAMQP_URL')
+RABBITMQ_URL = "amqps://ivxxqcdm:YMLNWHXckzBIoPL_JuaNWpgFwAMRMIs5@jackal.rmq.cloudamqp.com/ivxxqcdm"
 EXCHANGE_NAME = "agendamento_exchange"
 EXCHANGE_TYPE = "topic"
 
