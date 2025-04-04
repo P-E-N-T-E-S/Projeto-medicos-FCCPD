@@ -72,7 +72,7 @@ Sistema distribuído onde:
 ## **📋 Exemplo de Fluxo**  
 1. Paciente envia:  
    ```json
-   {"especialidade": "Cardiologia", "dataConsulta": "02/05/2025 - 14:00"}
+   {'dataSolicitacao': '04/04/2025 - 09:51', 'nome': 'lili', 'especialidade': 'Clinico geral', 'dataConsulta': '04/04/2025 - 14:00'} para agendamento.clinico_geral
    ```  
 2. Assistente de Cardiologia:  
    - Verifica disponibilidade.  
